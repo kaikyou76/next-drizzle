@@ -8,6 +8,13 @@
       "when": 1724317446856,
       "tag": "0000_shocking_epoch",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1724486275873,
+      "tag": "0001_clammy_vulcan",
+      "breakpoints": true
     }
   ]
 }

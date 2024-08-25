@@ -6,6 +6,7 @@ import { createId } from '@paralleldrive/cuid2'
 
 import { db } from '@/db/drizzle'
 import { users } from '@/db/schema'
+import { eq } from 'drizzle-orm'
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -66,6 +67,21 @@ export async function POST(req: Request) {
         name: payload.data.first_name + ' ' + payload.data.last_name,
         email: payload.data.email_addresses[0].email_address        
     }).returning();
+
+    console.log(data);
+  }
+
+  if (eventType === "user.updated"){
+    const [data] = await db.update(users).set({
+        imageUrl: payload.data.image_url
+    }).where(eq(users.clerkId, payload.data.id)).returning();
+
+    console.log(data);
+  }
+
+  if (eventType === "user.deleted"){
+    const [data] = await db.delete(users).where(eq(users.clerkId, payload.data.id))
+    .returning({id: users.id});
 
     console.log(data);
   }

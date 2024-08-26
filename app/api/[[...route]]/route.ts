@@ -6,16 +6,12 @@ export const runtime = 'edge'
 
 const app = new Hono().basePath('/api')
 
-//http://localhost:3000/api/hello
-app.get('/hello', (c) => {
-  return c.json({
-    message: 'Hello Next.js!',
-  })
-})
-
-app.route("/users", users);
+const routes = app.route("/users", users);
 
 export const GET = handle(app)
 export const POST = handle(app)
 export const PATCH = handle(app)
 export const DELETE = handle(app)
+
+//Routeの型をexportします。
+export type AppType = typeof routes

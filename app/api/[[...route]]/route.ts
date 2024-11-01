@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
+import users from "./users";
 
 export const runtime = "edge";
 
@@ -10,6 +11,8 @@ app.get("/hello", (c) => {
     message: "Hello Next.js!",
   });
 });
+
+app.route("/users", users);
 
 export const GET = handle(app);
 export const POST = handle(app);

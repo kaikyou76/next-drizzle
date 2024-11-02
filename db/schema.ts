@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, primaryKey } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
 export const users = pgTable("users_table", {
@@ -18,6 +18,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   profile: one(profile),
   posts: many(posts),
   comments: many(comments),
+  usersToGroups: many(usersToGroups),
 }));
 
 export const insertUsersSchema = createInsertSchema(users);
@@ -77,3 +78,38 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
 }));
 
 export const insertCommentsSchema = createInsertSchema(comments);
+
+export const groups = pgTable("groups_table", {
+  id: text("id").primaryKey(),
+  name: text("name"),
+});
+
+export const groupsRelations = relations(groups, ({ many }) => ({
+  usersToGroups: many(usersToGroups),
+}));
+
+export const usersToGroups = pgTable(
+  "users_to_groups",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    groupId: text("group_id")
+      .notNull()
+      .references(() => groups.id),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.userId, t.groupId] }),
+  })
+);
+
+export const usersToGroupsRelations = relations(usersToGroups, ({ one }) => ({
+  group: one(groups, {
+    fields: [usersToGroups.groupId],
+    references: [groups.id],
+  }),
+  user: one(users, {
+    fields: [usersToGroups.userId],
+    references: [users.id],
+  }),
+}));

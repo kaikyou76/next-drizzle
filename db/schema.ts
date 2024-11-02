@@ -29,3 +29,24 @@ export const profile = pgTable("profile_table", {
     .notNull()
     .$onUpdate(() => new Date()),
 });
+
+export const insertProfileSchema = createInsertSchema(profile);
+
+export const posts = pgTable("posts_table", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").references(() => users.id),
+  content: text("content"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
+
+export const postsRelations = relations(posts, ({ one, many }) => ({
+  author: one(users, {
+    fields: [posts.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertPostsSchema = createInsertSchema(posts);

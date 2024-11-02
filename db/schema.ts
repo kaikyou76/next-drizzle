@@ -16,6 +16,8 @@ export const users = pgTable("users_table", {
 
 export const usersRelations = relations(users, ({ one, many }) => ({
   profile: one(profile),
+  posts: many(posts),
+  comments: many(comments),
 }));
 
 export const insertUsersSchema = createInsertSchema(users);
@@ -47,6 +49,31 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
     fields: [posts.userId],
     references: [users.id],
   }),
+  comments: many(comments),
 }));
 
 export const insertPostsSchema = createInsertSchema(posts);
+
+export const comments = pgTable("comments_table", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").references(() => users.id),
+  postId: text("post_id").references(() => posts.id),
+  comment: text("comment"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
+
+export const commentsRelations = relations(comments, ({ one, many }) => ({
+  user: one(users, {
+    fields: [comments.userId],
+    references: [users.id],
+  }),
+  post: one(posts, {
+    fields: [comments.postId],
+    references: [posts.id],
+  }),
+}));
+
+export const insertCommentsSchema = createInsertSchema(comments);

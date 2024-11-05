@@ -10,7 +10,7 @@ const app = new Hono()
 
   .get("/", async (c) => {
     const data = await db.select().from(users);
-    return c.json({ users: data });
+    return c.json({ data });
   })
   .get("/me", clerkMiddleware(), async (c) => {
     const auth = getAuth(c);

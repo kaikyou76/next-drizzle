@@ -10,24 +10,27 @@ import {
 } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
+import { NavList } from "./nav-list";
 
 const navItem = [
-  { heaf: "/", label: "Home" },
-  { heaf: "/profile", label: "Profile" },
+  { href: "/", lavel: "Home" },
+  { href: "/profile", lavel: "Profile" },
 ];
 
-export const Navber = () => {
+export const Navbar = () => {
   return (
     <div className="w-full py-3 px-6">
       <div className="w-full max-w-screen-2xl mx-auto flex items-center justify-between">
         <Link href="/">
           <h1 className="text-2xl font-bold">My App</h1>
           <p className="text-sm font-semibold text-muted-foreground">
-            Nextjs Hnono Drizzle
+            Nextjs Hono Drizzle
           </p>
         </Link>
         <nav className="flex items-center gap-x-3">
-          <div>{/* navigaiton */}</div>
+          <div>
+            <NavList navItem={navItem} />
+          </div>
           <ClerkLoading>
             <div className="flex items-center justify-center">
               <Loader2 className="size-7 animate-spin" />

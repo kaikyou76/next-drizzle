@@ -11,6 +11,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { NavList } from "./nav-list";
+import { MobileNavList } from "./mobile-nav-list";
 
 const navItem = [
   { href: "/", lavel: "Home" },
@@ -28,7 +29,7 @@ export const Navbar = () => {
           </p>
         </Link>
         <nav className="flex items-center gap-x-3">
-          <div>
+          <div className="hidden lg:block">
             <NavList navItem={navItem} />
           </div>
           <ClerkLoading>
@@ -46,6 +47,9 @@ export const Navbar = () => {
               <UserButton />
             </SignedIn>
           </ClerkLoaded>
+          <div className="block lg:hidden">
+            <MobileNavList navItem={navItem} />
+          </div>
         </nav>
       </div>
     </div>

@@ -9,8 +9,17 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useGetClerkUser } from "@/hooks/users/use-get-clerk-user";
 
 const ProfilePage = () => {
+  const clerkUserQuery = useGetClerkUser();
+  const clerkUser = clerkUserQuery.data;
+  const isLoading = clerkUserQuery.isLoading;
+
+  if (isLoading || !clerkUser) {
+    <div>Loading...</div>;
+  }
+
   return (
     <div className="flex flex-col gap-y-3">
       <Card>
@@ -22,13 +31,13 @@ const ProfilePage = () => {
         <CardContent>
           <div className="flex items-center gap-x-2">
             <Avatar>
-              <AvatarImage src={""} alt="User" />
+              <AvatarImage src={clerkUser?.imageUrl || ""} alt="User" />
               <AvatarFallback>M</AvatarFallback>
             </Avatar>
             <div className="flex flex-col justify-center">
-              <p className="text-sm truncate">user name</p>
+              <p className="text-sm truncate">{clerkUser?.name}</p>
               <p className="text-sm truncate text-muted-foreground">
-                user email
+                {clerkUser?.email}
               </p>
             </div>
           </div>

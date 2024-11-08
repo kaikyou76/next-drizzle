@@ -24,7 +24,7 @@ const app = new Hono()
     if (!data) {
       return c.json({ error: "user not found!" }, 404);
     }
-    return c.json({ user: data });
+    return c.json({ data });
   })
   //idと紐づけるユーザー情報を取得したい場合のロジック
   .get(

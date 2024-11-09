@@ -33,6 +33,13 @@ export const profile = pgTable("profile_table", {
     .$onUpdate(() => new Date()),
 });
 
+export const profileRelations = relations(profile, ({ one, many }) => ({
+  user: one(users, {
+    fields: [profile.userId],
+    references: [users.id],
+  }),
+}));
+
 export const insertProfileSchema = createInsertSchema(profile);
 
 export const posts = pgTable("posts_table", {

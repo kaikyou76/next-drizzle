@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
 import { db } from "@/db/drizzle";
-import { users } from "@/db/schema";
+import { profile, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 const app = new Hono()
@@ -17,10 +17,21 @@ const app = new Hono()
     if (!auth?.userId) {
       return c.json({ error: "Unauthorized" }, 401);
     }
-    const [data] = await db
-      .select()
-      .from(users)
-      .where(eq(users.clerkId, auth.userId));
+    // const [data] = await db
+    //   .select()
+    //   .from(users)
+    //   .leftJoin(profile, eq(users.id, profile.userId))
+    //   .where(eq(users.clerkId, auth.userId));
+    const data = await db.query.users.findFirst({
+      where: eq(users.clerkId, auth.userId),
+      with: {
+        profile: {
+          columns: {
+            message: true,
+          },
+        },
+      },
+    });
     if (!data) {
       return c.json({ error: "user not found!" }, 404);
     }

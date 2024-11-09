@@ -20,6 +20,8 @@ const ProfilePage = () => {
     <div>Loading...</div>;
   }
 
+  console.log(clerkUser);
+
   return (
     <div className="flex flex-col gap-y-3">
       <Card>

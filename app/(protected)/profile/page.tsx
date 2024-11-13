@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, ElementRef } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -16,6 +16,14 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useGetClerkUser } from "@/hooks/users/use-get-clerk-user";
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   message: z.string().min(2, {
@@ -25,6 +33,10 @@ const formSchema = z.object({
 
 const ProfilePage = () => {
   const [isEditable, setIsEditable] = useState(false);
+
+  const formRef = useRef<ElementRef<"form">>(null);
+  const textareaRef = useRef<ElementRef<"textarea">>(null);
+
   const clerkUserQuery = useGetClerkUser();
   const clerkUser = clerkUserQuery.data;
   const isLoading = clerkUserQuery.isLoading;
@@ -42,6 +54,15 @@ const ProfilePage = () => {
 
   const enableEditing = () => {
     setIsEditable(true);
+    setTimeout(() => {
+      textareaRef.current?.focus();
+      textareaRef.current?.select();
+    });
+  };
+
+  const onBlur = () => {
+    formRef.current?.requestSubmit();
+    setIsEditable(false);
   };
 
   if (isLoading || !clerkUser) {
@@ -82,7 +103,30 @@ const ProfilePage = () => {
         </CardHeader>
         <CardContent>
           {isEditable ? (
-            <div>form</div>
+            <div>
+              <Form {...form}>
+                <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Hello"
+                            {...field}
+                            onBlur={onBlur}
+                            ref={textareaRef}
+                            className="w-full h-40 resize-none rounded-md"
+                            disabled={false}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            </div>
           ) : !clerkUser.profile ? (
             <Button onClick={enableEditing}>Create Message</Button>
           ) : (

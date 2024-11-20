@@ -5,6 +5,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { useCreateProfile } from "@/hooks/profiles/use-create-profile";
+import { useGetClerkUser } from "@/hooks/users/use-get-clerk-user";
+
 import {
   Card,
   CardContent,
@@ -14,7 +17,6 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useGetClerkUser } from "@/hooks/users/use-get-clerk-user";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -37,6 +39,8 @@ const ProfilePage = () => {
   const formRef = useRef<ElementRef<"form">>(null);
   const textareaRef = useRef<ElementRef<"textarea">>(null);
 
+  const { mutate, isPending } = useCreateProfile();
+
   const clerkUserQuery = useGetClerkUser();
   const clerkUser = clerkUserQuery.data;
   const isLoading = clerkUserQuery.isLoading;
@@ -49,7 +53,7 @@ const ProfilePage = () => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    mutate(values);
   };
 
   const enableEditing = () => {

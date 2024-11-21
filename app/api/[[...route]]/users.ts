@@ -27,6 +27,7 @@ const app = new Hono()
       with: {
         profile: {
           columns: {
+            id: true,
             message: true,
           },
         },

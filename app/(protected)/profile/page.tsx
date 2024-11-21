@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 
 import { useCreateProfile } from "@/hooks/profiles/use-create-profile";
 import { useGetClerkUser } from "@/hooks/users/use-get-clerk-user";
+import { useUpdateProfile } from "@/hooks/profiles/use-update-profiles";
 
 import {
   Card,
@@ -41,6 +42,9 @@ const ProfilePage = () => {
 
   const { mutate, isPending } = useCreateProfile();
 
+  const { mutate: updateMutate, isPending: updateIsPending } =
+    useUpdateProfile();
+
   const clerkUserQuery = useGetClerkUser();
   const clerkUser = clerkUserQuery.data;
   const isLoading = clerkUserQuery.isLoading;
@@ -53,10 +57,17 @@ const ProfilePage = () => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    mutate(values);
+    if (clerkUser && clerkUser.profile && clerkUser.profile.message) {
+      updateMutate({ id: clerkUser.profile.id, message: values.message });
+    } else {
+      mutate(values);
+    }
   };
 
   const enableEditing = () => {
+    if (clerkUser && clerkUser.profile && clerkUser.profile.message) {
+      form.setValue("message", clerkUser.profile.message);
+    }
     setIsEditable(true);
     setTimeout(() => {
       textareaRef.current?.focus();
@@ -125,6 +136,7 @@ const ProfilePage = () => {
                             disabled={false}
                           />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -134,7 +146,10 @@ const ProfilePage = () => {
           ) : !clerkUser.profile ? (
             <Button onClick={enableEditing}>Create Message</Button>
           ) : (
-            <div className="w-full h-40 rounded-md border-2 border-gray-600">
+            <div
+              onClick={enableEditing}
+              className="w-full h-40 p-3 text-sm rounded-mg border-2 border-gray-600"
+            >
               {clerkUser.profile.message}
             </div>
           )}
